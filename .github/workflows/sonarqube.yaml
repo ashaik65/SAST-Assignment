@@ -39,3 +39,21 @@ jobs:
           -Dsonar.token=$SONAR_TOKEN \
           -Dsonar.gradle.skipCompile=true \
           -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml
+
+    - name: Download SonarQube issues report
+      run: |
+        curl -u ${{ secrets.SONAR_TOKEN }}: \
+          "http://20.198.241.232:9000/api/issues/search?componentKeys=sast_assignment&resolved=false" \
+          -o sonar_issues.json
+
+    - name: Upload JaCoCo HTML Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: jacoco-html-report
+        path: build/reports/jacoco/test/html
+
+    - name: Upload SonarQube Issues Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: sonar-issues-json
+        path: sonar_issues.json
